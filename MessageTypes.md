@@ -1,0 +1,13 @@
+When calling `ReadMessage` on `NetClient`, `NetServer` or `NetPeer` you'll get a `NetMessageType` for the data. The most common type will be `NetMessageType.Data` which means the content of the buffer is data sent from the remote connection. Other NetMessageTypes are:
+
+| **`DebugMessage`** | Contains various debug information emitted by the library; these messages will only appear in DEBUG builds. The buffer contains a string, retrieved by using `buffer.ReadString()`|
+|:-------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **`VerboseDebugMessage`** | Contains very verbose debug information emitted by the library; these messages will only appear in DEBUG builds, and can be quite numerous. The buffer contains a string, retrieved by using `buffer.ReadString()`|
+| **`StatusChanged`** | Emitted when status of a connection has changed. The buffer will contain a string explaining the reason for the change in status                                                  |
+| **`ServerDiscovered`** | Emitted when a server responds to the `DiscoverLocalServers()` or `DiscoverKnownServer()` call. The content of the buffer is the endpoint of the server; use `buffer.ReadIPEndPoint()` to retrieve it|
+| **`Receipt`**      | Receipt messages will appear if you send a message using the `SendMessage(buffer, recipient, receiptBuffer)` override. When the message is known to have arrived at the destination, a `Receipt` message is given to the application with the same buffer data that was used in the `SendMessage` call|
+| **`BadMessageReceived`** | Emitted when the library receives malformed or unhandled message types. It contains a string and is disabled by default.                                                          |
+| **`ConnectionRejected`** | Emitted when a connection is rejected by the library, for example because `MaxConnections` has been reached. It contains a string and is disabled by default.                     |
+| **`OutOfBandData`** | Data sent from a non-connected remote host. It is disabled by default.                                                                                                            |
+| **`NATIntroduction`** | Sent by a `NetServer` or `NetPeer` which wishes to introduce two peers behind NAT to eachother. It is disabled by default.                                                        |
+| **`ConnectionApproval`** | Received when a client or peer tries to connect (if the messagetype is enabled); Calling `Approve()` or `Disapprove()` on the connection object will accept or reject the connection. It is disabled by default (`Approve()` called automatically).|
